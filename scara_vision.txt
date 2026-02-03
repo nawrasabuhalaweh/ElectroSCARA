@@ -1,0 +1,39 @@
+import cv2
+import numpy as np
+
+lower_blue = np.array([90, 50, 50])
+upper_blue = np.array([130, 255, 255])
+
+def readFrame(cap):
+    ret, frame = cap.read()
+
+    cx = 0
+    cy = 0
+
+    if ret:
+        hsv  = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        mask = cv2.inRange(hsv, lower_blue, upper_blue)
+
+        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+        if contours:
+            largestContour = max(contours, key=cv2.contourArea)
+
+            x, y, w, h = cv2.boundingRect(largestContour)
+            cx = int(x + w / 2)
+            cy = int(y + h / 2)
+
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            cv2.circle(frame, (cx, cy), 5, (0, 255, 0), -1)
+            cv2.circle(frame, (-177, 185), 2, (0, 255, 0), -1)
+
+
+
+        cv2.imshow("frame", frame)
+        cv2.imshow("mask", mask)
+
+        calibratedX = int(0.5375 * cx - 172)
+        calibratedY = int(0.5375 * (480 - cy) + 180)
+
+        return [calibratedX, calibratedY]
+

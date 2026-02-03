@@ -1,0 +1,22 @@
+# gcode commands are given in the form G1 Xa + Xb + Fc where:
+#   a is the number of steps in the x direction
+#   b is the number of steps in the y direction
+#   c is the feed rate
+# note that for our case steps in the +x and +y direction are ccw rotations
+
+def writeScara(scara, stepsX, stepsY, feed):
+    command = f"G1 X{stepsX:.1f}  Y{stepsY:.1f} F{feed} \n"
+    encodedCommand = command.encode('utf-8')
+    scara.write(encodedCommand)
+    response = scara.readline().decode('utf-8').strip()
+    print(response)
+
+def writeManual(scara, manualCommand):
+    encodedManualCommand = manualCommand.encode('utf-8')
+    scara.write(encodedManualCommand)
+    response = scara.readline().decode('utf-8').strip()
+    print(response)
+
+
+def closeScara(scara):
+    scara.close()

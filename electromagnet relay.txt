@@ -1,0 +1,29 @@
+const int relayPin = 7;
+char receivedChar;
+boolean newData = false;
+
+void setup() {
+  pinMode(relayPin, OUTPUT);
+  digitalWrite(relayPin, LOW);
+  Serial.begin(9600);
+  Serial.println("Ready for input");
+}
+
+void loop() {
+  recvOneChar();
+  closeSwitch();
+}
+
+void recvOneChar() {
+  if (Serial.available() > 0) {
+    receivedChar = Serial.read();
+  }
+}
+
+void closeSwitch() {
+  if (receivedChar == 't') {
+    digitalWrite(relayPin, HIGH);
+  } else if (receivedChar == 'f') {
+    digitalWrite(relayPin, LOW);
+  }
+}
